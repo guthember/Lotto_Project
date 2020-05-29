@@ -14,7 +14,7 @@ class Lot:
         self.num2 = num2
         self.win2 = win2
         self.numbers = [int(n1), int(n2), int(n3), int(n4), int(n5)]
-
+        self.sumNums = sum(self.numbers)
 
 lots = []
 
@@ -51,4 +51,10 @@ file.close()
 file = open('numbersRank.txt','w')
 for n in newStatVal:
     file.write(f'{n}:{newStatVal[n]}\n')
+file.close()
+
+lots.sort(key=lambda x: x.sumNums, reverse=False)
+file = open('minSumRank.txt','w')
+for l in lots:
+    file.write(f'{l.numbers}={l.sumNums}\n')
 file.close()
