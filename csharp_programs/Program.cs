@@ -49,29 +49,17 @@ namespace Lottos
         {
             get { return Szamok.Sum(); }
         }
-
-        public int Hasonlo
+      
+        public int Talalat(Lotto masik)
         {
-            get
+            int db = 0;
+            foreach (int item in Szamok)
             {
-                List<int> Jegyek = new List<int>();
-                foreach (int item in Szamok)
-                {
-                    int tizes = item / 10;
-                    if (item > 0)
-                        Jegyek.Add(tizes);
-                    Jegyek.Add(item - (tizes * 10));
-                }
-                int max = 0;
-                for (int i = 0; i < 10; i++)
-                {
-                    int db = Jegyek.Count(n => n == i);
-                    if (db > max)
-                        max = db;
-                }
-                return max;
-            }  
-        }        
+                if (masik.Szamok.Contains(item))
+                    db++;
+            }
+            return db;
+        }
     }
 
     class Program
@@ -111,18 +99,38 @@ namespace Lottos
                 sw.WriteLine();
             }
             sw.Close();
+
             Console.WriteLine("Leghasonlóbb számsorok:");
-            var hasonlok = lottok.OrderByDescending(n => n.Hasonlo).Take(2);
-            sw = new StreamWriter("numbersSimilar.txt");
-            foreach (var item in hasonlok)
-            {
-                sw.WriteLine("{0};{1}", item.Ev, item.Het);                
-                for (int i = 0; i < item.Szamok.Length; i++)
+            int max = 0;
+            int maxIndex1 = 0;
+            int maxIndex2 = 0;
+            for (int i = 0; i < lottok.Count - 1; i++)
+            {                
+                for (int j = i + 1; j < lottok.Count; j++)
                 {
-                    sw.Write($"{item.Szamok[i]};");
+                    int egyezo = lottok[i].Talalat(lottok[j]);
+                    if ( egyezo > max)
+                    {
+                        max = egyezo;
+                        maxIndex1 = i;
+                        maxIndex2 = j;
+                    }
                 }
-                sw.WriteLine();
             }
+            
+            sw = new StreamWriter("numbersSimilar.txt");           
+            sw.WriteLine("{0};{1}", lottok[maxIndex1].Ev, lottok[maxIndex1].Het);
+            for (int i = 0; i < lottok[maxIndex1].Szamok.Length; i++)
+            {
+                sw.Write($"{lottok[maxIndex1].Szamok[i]};");
+            }
+            sw.WriteLine();
+            sw.WriteLine("{0};{1}", lottok[maxIndex2].Ev, lottok[maxIndex2].Het);
+            for (int i = 0; i < lottok[maxIndex2].Szamok.Length; i++)
+            {
+                sw.Write($"{lottok[maxIndex2].Szamok[i]};");
+            }
+            sw.WriteLine();
             sw.Close();
             Console.ReadKey();
         }
